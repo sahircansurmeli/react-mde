@@ -38,6 +38,7 @@ export const boldCommand: Command = {
         end: state2.selection.end
       });
     }
+    
     else {
       state2 = textApi.replaceSelection(`**${state1.selectedText}**`);
       // Adjust the selection to not contain the **
