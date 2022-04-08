@@ -1,5 +1,3 @@
-> This repository is now archived. Unfortunately I do not have the time to maintain it. Sorry for the inconvenience and thanks a lot to all the people who contributed to improving react-mde.
-
 # 📝 react-mde
 
 [![npm](https://img.shields.io/npm/dt/react-mde)](https://www.npmjs.com/package/react-mde)
@@ -7,6 +5,8 @@
 [![twitter](https://img.shields.io/twitter/follow/andrerpena?style=social)](https://twitter.com/andrerpena)
 
 A simple yet powerful and extensible **React Markdown Editor** that aims to have feature parity with the Github Markdown editor. React-mde has no 3rd party dependencies.
+
+Added support for toggling commands.
 
 ## Demo
 
@@ -161,6 +161,8 @@ In order to make React-mde zero deps, I've embedded two small libraries:
 
 ## About the author
 
-Made with :heart: by André Pena and [other awesome contributors](https://github.com/andrerpena/react-mde/graphs/contributors).
+Originally made with :heart: by André Pena and [other awesome contributors](https://github.com/andrerpena/react-mde/graphs/contributors).
+
+Added toggle support by Sahircan Sürmeli
 
 [![twitter](https://img.shields.io/twitter/follow/andrerpena?style=social)](https://twitter.com/andrerpena)
