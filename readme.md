@@ -161,7 +161,7 @@ In order to make React-mde zero deps, I've embedded two small libraries:
 
 ## About the author
 
-Originally made with :heart: by André Pena and [other awesome contributors](https://github.com/andrerpena/react-mde/graphs/contributors).
+Made with :heart: by André Pena and [other awesome contributors](https://github.com/andrerpena/react-mde/graphs/contributors).
 
 Added toggle support by Sahircan Sürmeli
 
