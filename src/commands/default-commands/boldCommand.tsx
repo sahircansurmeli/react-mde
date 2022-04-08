@@ -11,7 +11,6 @@ export const boldCommand: Command = {
       selection: initialState.selection
     });
     const state1 = textApi.setSelectionRange(newSelectionRange);
-    // Replaces the current selection with the bold mark up
 
     const s1 = state1.selection;
     const text = state1.text;
@@ -40,6 +39,7 @@ export const boldCommand: Command = {
     }
     
     else {
+      // Replaces the current selection with the bold mark up
       state2 = textApi.replaceSelection(`**${state1.selectedText}**`);
       // Adjust the selection to not contain the **
       textApi.setSelectionRange({
