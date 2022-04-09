@@ -1,6 +1,6 @@
 {
   "name": "@sahircansurmeli/react-mde",
-  "version": "11.6.0",
+  "version": "11.6.1",
   "description": "React Markdown Editor",
   "main": "./lib/js/index.js",
   "types": "./lib/definitions/index.d.ts",
