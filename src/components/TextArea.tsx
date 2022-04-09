@@ -277,18 +277,12 @@ export class TextArea extends React.Component<TextAreaProps, TextAreaState> {
       nextLineIdx = nextLineIdx > 0 ? nextLineIdx + currentLineIdx : textArea.value.length;
       const currentLine = textArea.value.slice(currentLineIdx, nextLineIdx);
 
-      console.log(currentLineIdx, nextLineIdx);
-      console.log("curline: ", currentLine);
-
       if (currentLine.slice(0, 2) == "- ") {
         event.preventDefault();
 
         const beforeCursor = textArea.value.slice(currentLineIdx + 2, textArea.selectionStart);
         const selected = textArea.value.slice(textArea.selectionStart, textArea.selectionEnd);
         const afterCursor = textArea.value.slice(textArea.selectionEnd, nextLineIdx);
-
-        console.log("before cursor:", beforeCursor, selected, afterCursor);
-        console.log(currentLineIdx);
 
         // If the cursor is next to the point and empty afterwards, delete the current point
         if (beforeCursor.trim() === "" && afterCursor.trim() === "") {
