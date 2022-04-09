@@ -277,6 +277,11 @@ export class TextArea extends React.Component<TextAreaProps, TextAreaState> {
       nextLineIdx = nextLineIdx > 0 ? nextLineIdx + currentLineIdx : textArea.value.length;
       const currentLine = textArea.value.slice(currentLineIdx, nextLineIdx);
 
+      if (textArea.selectionStart === currentLineIdx) {
+        return;
+      }
+
+      // Unordered list
       if (currentLine.slice(0, 2) == "- ") {
         event.preventDefault();
 
@@ -293,7 +298,56 @@ export class TextArea extends React.Component<TextAreaProps, TextAreaState> {
         else {
           const currentSelection = textArea.selectionStart;
           textArea.value = textArea.value.slice(0, currentLineIdx) + `- ${beforeCursor}\n- ${afterCursor}` + textArea.value.slice(nextLineIdx);
-          textArea.setSelectionRange(currentSelection+3, currentSelection+3);
+          textArea.setSelectionRange(currentSelection + 3, currentSelection + 3);
+          onChange(textArea.value);
+        }
+
+        return;
+      }
+
+      const enumMatch = currentLine.match(/^[0-9]+(?=\. )/);
+
+      // Ordered list
+      if (enumMatch) {
+        event.preventDefault();
+
+        const enumNumber = parseInt(enumMatch[0]);
+
+        const beforeCursor = textArea.value.slice(currentLineIdx + enumMatch[0].length + 2, textArea.selectionStart);
+        const selected = textArea.value.slice(textArea.selectionStart, textArea.selectionEnd);
+        const afterCursor = textArea.value.slice(textArea.selectionEnd, nextLineIdx);
+
+        // If the cursor is next to the point and empty afterwards, delete the current point
+        if (beforeCursor.trim() === "" && afterCursor.trim() === "") {
+          textArea.value = textArea.value.slice(0, currentLineIdx);
+          onChange(textArea.value);
+        }
+
+        else {
+          const currentSelection = textArea.selectionStart;
+          const currentVal = textArea.value;
+          const lines = currentVal.slice(currentLineIdx).split("\n");
+
+          console.log(lines);
+
+          textArea.value = currentVal.slice(0, currentLineIdx);
+          textArea.value += `${enumNumber}. ${beforeCursor}\n${enumNumber+1}. ${afterCursor}\n`;
+          let i;
+          for (i = 1; i < lines.length; i++) {
+            const lineNumMatch = lines[i].match(/^[0-9]+(?=\. )/);
+            if (!lineNumMatch) {
+              break;
+            }
+
+            const lineNum = parseInt(lineNumMatch[0]);
+            const newEnumStr = `${enumNumber+i+1}. `;
+            textArea.value += `${newEnumStr}${lines[i].slice(newEnumStr.length)}\n`;
+          }
+
+          textArea.value += lines.slice(i).join("\n");
+
+          const newEnumLength = (enumNumber+1).toString().length
+          textArea.setSelectionRange(currentSelection + newEnumLength + 3, currentSelection + newEnumLength + 3);
           onChange(textArea.value);
         }
       }
