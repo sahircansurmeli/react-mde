@@ -1,6 +1,6 @@
 {
-  "name": "react-mde",
-  "version": "11.5.0",
+  "name": "@sahircansurmeli/react-mde",
+  "version": "11.6.0",
   "description": "React Markdown Editor",
   "main": "./lib/js/index.js",
   "types": "./lib/definitions/index.d.ts",
@@ -29,7 +29,7 @@
     "text-editor",
     "markdown-editor"
   ],
-  "author": "Andre Pena",
+  "author": "Sahircan Sürmeli",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/andrerpena/react-mde.git/issues"
