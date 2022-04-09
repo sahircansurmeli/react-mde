@@ -14,6 +14,7 @@ import {
   TextareaHTMLAttributes
 } from "react";
 import { ComponentSimilarTo } from "../util/type-utils";
+import { text } from "express";
 
 export interface MentionState {
   status: "active" | "inactive" | "loading";
@@ -264,6 +265,45 @@ export class TextArea extends React.Component<TextAreaProps, TextAreaState> {
       default:
       // Ignore
     }
+
+    if (event.key === "Enter") {
+      const { onChange } = this.props;
+      const textArea = this.getTextArea();
+      // Else if the cursor is between a word, move what's after to a new point in new line
+      // Else if the cursor is at the end of the line, create a new empty point
+      // Merge last two
+      const currentLineIdx = textArea.value.slice(0, textArea.selectionStart).lastIndexOf("\n") + 1;
+      let nextLineIdx = textArea.value.slice(currentLineIdx, textArea.value.length).indexOf("\n");
+      nextLineIdx = nextLineIdx > 0 ? nextLineIdx + currentLineIdx : textArea.value.length;
+      const currentLine = textArea.value.slice(currentLineIdx, nextLineIdx);
+
+      console.log(currentLineIdx, nextLineIdx);
+      console.log("curline: ", currentLine);
+
+      if (currentLine.slice(0, 2) == "- ") {
+        event.preventDefault();
+
+        const beforeCursor = textArea.value.slice(currentLineIdx + 2, textArea.selectionStart);
+        const selected = textArea.value.slice(textArea.selectionStart, textArea.selectionEnd);
+        const afterCursor = textArea.value.slice(textArea.selectionEnd, nextLineIdx);
+
+        console.log("before cursor:", beforeCursor, selected, afterCursor);
+        console.log(currentLineIdx);
+
+        // If the cursor is next to the point and empty afterwards, delete the current point
+        if (beforeCursor.trim() === "" && afterCursor.trim() === "") {
+          textArea.value = textArea.value.slice(0, currentLineIdx);
+          onChange(textArea.value);
+        }
+
+        else {
+          const currentSelection = textArea.selectionStart;
+          textArea.value = textArea.value.slice(0, currentLineIdx) + `- ${beforeCursor}\n- ${afterCursor}` + textArea.value.slice(nextLineIdx);
+          textArea.setSelectionRange(currentSelection+3, currentSelection+3);
+          onChange(textArea.value);
+        }
+      }
+    }
   };
 
   handleKeyUp = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -384,9 +424,9 @@ export class TextArea extends React.Component<TextAreaProps, TextAreaState> {
 
     const TextAreaComponent = (textAreaComponent ||
       "textarea") as DetailedHTMLFactory<
-      TextareaHTMLAttributes<HTMLTextAreaElement>,
-      HTMLTextAreaElement
-    >;
+        TextareaHTMLAttributes<HTMLTextAreaElement>,
+        HTMLTextAreaElement
+      >;
 
     const heightVal = height && heightUnits ? height + heightUnits : height;
 

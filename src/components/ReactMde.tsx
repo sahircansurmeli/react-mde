@@ -132,6 +132,7 @@ export class ReactMde extends React.Component<ReactMdeProps, ReactMdeState> {
 
   handleTextChange = (value: string) => {
     const { onChange } = this.props;
+    //console.log("text change");
     onChange(value);
   };
 

@@ -59,8 +59,6 @@ export const codeCommand: Command = {
       return;
     }
 
-    console.log(selectedText);
-
     let charsBefore = selectedText.substring(0, 4) === "\`\`\`\n" ? 4
       : selectedText.substring(0, 3) === "\`\`\`" ? 3 : 0;
 
@@ -81,8 +79,6 @@ export const codeCommand: Command = {
 
     charsAfter = text.substring(s1.end, s1.end + 4) === "\n\`\`\`" ? 4
       : text.substring(s1.end, s1.end + 3) === "\`\`\`" ? 3 : 0;
-
-    console.log(charsBefore, charsAfter);
 
     if (charsBefore > 0 && charsAfter > 0) {
       textApi.setSelectionRange({
