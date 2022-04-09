@@ -16,29 +16,47 @@ export const quoteCommand: Command = {
     });
     const state1 = textApi.setSelectionRange(newSelectionRange);
 
-    const breaksBeforeCount = getBreaksNeededForEmptyLineBefore(
-      state1.text,
-      state1.selection.start
-    );
-    const breaksBefore = Array(breaksBeforeCount + 1).join("\n");
+    const currentLineIdx = state1.text.slice(0, state1.selection.start).lastIndexOf("\n") + 1;
+    let nextLineIdx = state1.text.slice(currentLineIdx).indexOf("\n");
+    nextLineIdx = nextLineIdx > 0 ? nextLineIdx + currentLineIdx : state1.text.length;
 
-    const breaksAfterCount = getBreaksNeededForEmptyLineAfter(
-      state1.text,
-      state1.selection.end
-    );
-    const breaksAfter = Array(breaksAfterCount + 1).join("\n");
+    if (state1.text.slice(currentLineIdx, currentLineIdx + 2) === "> ") {
+      textApi.setSelectionRange({
+        start: currentLineIdx,
+        end: currentLineIdx + 2
+      });
+      textApi.replaceSelection("");
+      textApi.setSelectionRange({
+        start: state1.selection.start - 2,
+        end: state1.selection.end - 2
+      });
+    }
 
-    // Replaces the current selection with the quote mark up
-    textApi.replaceSelection(
-      `${breaksBefore}> ${state1.selectedText}${breaksAfter}`
-    );
+    else {
+      const breaksBeforeCount = getBreaksNeededForEmptyLineBefore(
+        state1.text,
+        state1.selection.start
+      );
+      const breaksBefore = Array(breaksBeforeCount + 1).join("\n");
 
-    const selectionStart = state1.selection.start + breaksBeforeCount + 2;
-    const selectionEnd = selectionStart + state1.selectedText.length;
+      const breaksAfterCount = getBreaksNeededForEmptyLineAfter(
+        state1.text,
+        state1.selection.end
+      );
+      const breaksAfter = Array(breaksAfterCount + 1).join("\n");
 
-    textApi.setSelectionRange({
-      start: selectionStart,
-      end: selectionEnd
-    });
+      // Replaces the current selection with the quote mark up
+      textApi.replaceSelection(
+        `${breaksBefore}> ${state1.selectedText}${breaksAfter}`
+      );
+
+      const selectionStart = state1.selection.start + breaksBeforeCount + 2;
+      const selectionEnd = selectionStart + state1.selectedText.length;
+
+      textApi.setSelectionRange({
+        start: selectionStart,
+        end: selectionEnd
+      });
+    }
   }
 };
