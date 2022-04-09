@@ -281,8 +281,32 @@ export class TextArea extends React.Component<TextAreaProps, TextAreaState> {
         return;
       }
 
+      // Task list
+      if (currentLine.slice(0, 6) === "- [ ] " || currentLine.slice(0, 6) === "- [x] ") {
+        event.preventDefault();
+
+        const beforeCursor = textArea.value.slice(currentLineIdx + 6, textArea.selectionStart);
+        const selected = textArea.value.slice(textArea.selectionStart, textArea.selectionEnd);
+        const afterCursor = textArea.value.slice(textArea.selectionEnd, nextLineIdx);
+
+        // If the cursor is next to the point and empty afterwards, delete the current point
+        if (beforeCursor.trim() === "" && afterCursor.trim() === "") {
+          textArea.value = textArea.value.slice(0, currentLineIdx);
+          onChange(textArea.value);
+        }
+
+        else {
+          const currentSelection = textArea.selectionStart;
+          textArea.value = textArea.value.slice(0, currentLineIdx) + `${currentLine.slice(0, 6)}${beforeCursor}\n- [ ] ${afterCursor}` + textArea.value.slice(nextLineIdx);
+          textArea.setSelectionRange(currentSelection + 7, currentSelection + 7);
+          onChange(textArea.value);
+        }
+
+        return;
+      }
+
       // Unordered list
-      if (currentLine.slice(0, 2) == "- ") {
+      else if (currentLine.slice(0, 2) === "- ") {
         event.preventDefault();
 
         const beforeCursor = textArea.value.slice(currentLineIdx + 2, textArea.selectionStart);
@@ -330,7 +354,7 @@ export class TextArea extends React.Component<TextAreaProps, TextAreaState> {
 
 
           textArea.value = currentVal.slice(0, currentLineIdx);
-          textArea.value += `${enumNumber}. ${beforeCursor}\n${enumNumber+1}. ${afterCursor}\n`;
+          textArea.value += `${enumNumber}. ${beforeCursor}\n${enumNumber + 1}. ${afterCursor}\n`;
           let i;
           for (i = 1; i < lines.length; i++) {
             const lineNumMatch = lines[i].match(/^[0-9]+(?=\. )/);
@@ -339,13 +363,13 @@ export class TextArea extends React.Component<TextAreaProps, TextAreaState> {
             }
 
             const lineNum = parseInt(lineNumMatch[0]);
-            const newEnumStr = `${enumNumber+i+1}. `;
+            const newEnumStr = `${enumNumber + i + 1}. `;
             textArea.value += `${newEnumStr}${lines[i].slice(newEnumStr.length)}\n`;
           }
 
           textArea.value += lines.slice(i).join("\n");
 
-          const newEnumLength = (enumNumber+1).toString().length
+          const newEnumLength = (enumNumber + 1).toString().length
           textArea.setSelectionRange(currentSelection + newEnumLength + 3, currentSelection + newEnumLength + 3);
           onChange(textArea.value);
         }
