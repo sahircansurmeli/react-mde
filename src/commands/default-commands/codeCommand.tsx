@@ -16,17 +16,83 @@ export const codeCommand: Command = {
     });
     const state1 = textApi.setSelectionRange(newSelectionRange);
 
+    const s1 = state1.selection;
+    const text = state1.text;
+    const selectedText = state1.selectedText;
+
+    let state2;
+
     // when there's no breaking line
-    if (state1.selectedText.indexOf("\n") === -1) {
-      textApi.replaceSelection(`\`${state1.selectedText}\``);
-      // Adjust the selection to not contain the **
+    if (selectedText.indexOf("\n") === -1) {
+      if (selectedText.substring(0, 1) === "\`" && selectedText.substring(selectedText.length - 1, selectedText.length) === "\`") {
+        state2 = textApi.replaceSelection(selectedText.substring(1, selectedText.length - 1));
+        textApi.setSelectionRange({
+          start: s1.start,
+          end: s1.end - 1
+        });
+      }
 
-      const selectionStart = state1.selection.start + 1;
-      const selectionEnd = selectionStart + state1.selectedText.length;
+      else if (s1.start >= 1 && text.substring(s1.start - 1, s1.start) === "\`" && text.substring(s1.end, s1.end + 1) === "\`") {
+        textApi.setSelectionRange({
+          start: s1.start - 1,
+          end: s1.end + 1
+        });
+        state2 = textApi.replaceSelection(state1.selectedText);
+        textApi.setSelectionRange({
+          start: state2.selection.start - state1.selectedText.length,
+          end: state2.selection.end
+        });
+      }
 
+      else {
+        textApi.replaceSelection(`\`${state1.selectedText}\``);
+        // Adjust the selection to not contain the **
+
+        const selectionStart = state1.selection.start + 1;
+        const selectionEnd = selectionStart + state1.selectedText.length;
+
+        textApi.setSelectionRange({
+          start: selectionStart,
+          end: selectionEnd
+        });
+      }
+      return;
+    }
+
+    console.log(selectedText);
+
+    let charsBefore = selectedText.substring(0, 4) === "\`\`\`\n" ? 4
+      : selectedText.substring(0, 3) === "\`\`\`" ? 3 : 0;
+
+    let charsAfter = selectedText.substring(selectedText.length - 4, selectedText.length) === "\n\`\`\`" ? 4
+      : selectedText.substring(selectedText.length - 3, selectedText.length) === "\`\`\`" ? 3 : 0;
+
+    if (charsBefore > 0 && charsAfter > 0) {
+      state2 = textApi.replaceSelection(selectedText.substring(charsBefore, selectedText.length - charsAfter));
       textApi.setSelectionRange({
-        start: selectionStart,
-        end: selectionEnd
+        start: s1.start,
+        end: s1.end - charsAfter
+      });
+      return;
+    }
+
+    charsBefore = s1.start >= 4 && text.substring(s1.start - 4, s1.start) === "\`\`\`\n" ? 4
+      : s1.start >= 3 && text.substring(s1.start - 3, s1.start) === "\`\`\`" ? 3 : 0;
+
+    charsAfter = text.substring(s1.end, s1.end + 4) === "\n\`\`\`" ? 4
+      : text.substring(s1.end, s1.end + 3) === "\`\`\`" ? 3 : 0;
+
+    console.log(charsBefore, charsAfter);
+
+    if (charsBefore > 0 && charsAfter > 0) {
+      textApi.setSelectionRange({
+        start: s1.start - charsBefore,
+        end: s1.end + charsAfter
+      });
+      state2 = textApi.replaceSelection(state1.selectedText);
+      textApi.setSelectionRange({
+        start: state2.selection.start - state1.selectedText.length,
+        end: state2.selection.end
       });
       return;
     }
@@ -35,6 +101,7 @@ export const codeCommand: Command = {
       state1.text,
       state1.selection.start
     );
+
     const breaksBefore = Array(breaksBeforeCount + 1).join("\n");
 
     const breaksAfterCount = getBreaksNeededForEmptyLineAfter(
