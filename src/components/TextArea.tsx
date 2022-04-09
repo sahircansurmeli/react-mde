@@ -212,58 +212,56 @@ export class TextArea extends React.Component<TextAreaProps, TextAreaState> {
       }
     }
 
-    if (!this.suggestionsEnabled()) {
-      return;
-    }
+    if (this.suggestionsEnabled()) {
+      const { key, shiftKey, currentTarget } = event;
+      const { selectionStart } = currentTarget;
+      const { mention } = this.state;
 
-    const { key, shiftKey, currentTarget } = event;
-    const { selectionStart } = currentTarget;
-    const { mention } = this.state;
-
-    switch (mention.status) {
-      case "loading":
-      case "active":
-        if (
-          key === "Escape" ||
-          (key === "Backspace" &&
-            selectionStart <= this.state.mention.startPosition)
-        ) {
-          // resetting suggestionsPromiseIndex will cause any promise that is yet to be resolved to have no effect
-          // when they finish loading.
-          this.suggestionsPromiseIndex = 0;
-          this.setState({
-            mention: {
-              status: "inactive",
-              suggestions: []
-            }
-          });
-        } else if (
-          mention.status === "active" &&
-          (key === "ArrowUp" || key === "ArrowDown") &&
-          !shiftKey
-        ) {
-          event.preventDefault();
-          const focusDelta = key === "ArrowUp" ? -1 : 1;
-          this.setState({
-            mention: {
-              ...mention,
-              focusIndex: mod(
-                mention.focusIndex + focusDelta,
-                mention.suggestions.length
-              )
-            }
-          });
-        } else if (
-          key === "Enter" &&
-          mention.status === "active" &&
-          mention.suggestions.length
-        ) {
-          event.preventDefault();
-          this.handleSuggestionSelected(mention.focusIndex);
-        }
-        break;
-      default:
-      // Ignore
+      switch (mention.status) {
+        case "loading":
+        case "active":
+          if (
+            key === "Escape" ||
+            (key === "Backspace" &&
+              selectionStart <= this.state.mention.startPosition)
+          ) {
+            // resetting suggestionsPromiseIndex will cause any promise that is yet to be resolved to have no effect
+            // when they finish loading.
+            this.suggestionsPromiseIndex = 0;
+            this.setState({
+              mention: {
+                status: "inactive",
+                suggestions: []
+              }
+            });
+          } else if (
+            mention.status === "active" &&
+            (key === "ArrowUp" || key === "ArrowDown") &&
+            !shiftKey
+          ) {
+            event.preventDefault();
+            const focusDelta = key === "ArrowUp" ? -1 : 1;
+            this.setState({
+              mention: {
+                ...mention,
+                focusIndex: mod(
+                  mention.focusIndex + focusDelta,
+                  mention.suggestions.length
+                )
+              }
+            });
+          } else if (
+            key === "Enter" &&
+            mention.status === "active" &&
+            mention.suggestions.length
+          ) {
+            event.preventDefault();
+            this.handleSuggestionSelected(mention.focusIndex);
+          }
+          break;
+        default:
+        // Ignore
+      }
     }
 
     if (event.key === "Enter") {
