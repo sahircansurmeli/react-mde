@@ -328,7 +328,6 @@ export class TextArea extends React.Component<TextAreaProps, TextAreaState> {
           const currentVal = textArea.value;
           const lines = currentVal.slice(currentLineIdx).split("\n");
 
-          console.log(lines);
 
           textArea.value = currentVal.slice(0, currentLineIdx);
           textArea.value += `${enumNumber}. ${beforeCursor}\n${enumNumber+1}. ${afterCursor}\n`;

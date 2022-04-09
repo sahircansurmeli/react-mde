@@ -19,14 +19,10 @@ export function insertBeforeEachLine(
   const lines = selectedText.split(/\n/);
 
   const isAlreadyAList = lines.every((val, idx) => {
-    console.log(lines.length);
     if (lines.length > 1 && idx == lines.length-1 && !val) {
       return true;
     }
-    if (typeof insertBefore === "function") {
-      console.log(val.slice(0, 3));
-      console.log(val.startsWith(insertBefore(val, idx)));
-    }
+
     return val.startsWith(typeof (insertBefore) === "string" ? insertBefore : insertBefore(val, idx))
   });
 
@@ -71,8 +67,6 @@ export const makeList = (
   const currentLineIdx = state0.text.slice(0, state0.selection.start).lastIndexOf("\n") + 1;
   let nextLineIdx = state0.text.slice(state0.selection.end+1).indexOf("\n");
   nextLineIdx = nextLineIdx >= 0 ? nextLineIdx + currentLineIdx + 1: state0.text.length;
-
-  console.log(currentLineIdx, nextLineIdx);
 
   const state1 = api.setSelectionRange({
     start: currentLineIdx,
