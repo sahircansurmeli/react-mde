@@ -18,9 +18,17 @@ export function insertBeforeEachLine(
 ): { modifiedText: string; insertionLength: number } {
   const lines = selectedText.split(/\n/);
 
-  const isAlreadyAList = lines.every((val, idx) => (
-    val.startsWith(typeof (insertBefore) === "string" ? insertBefore : insertBefore(val, idx))
-  ));
+  const isAlreadyAList = lines.every((val, idx) => {
+    console.log(lines.length);
+    if (lines.length > 1 && idx == lines.length-1 && !val) {
+      return true;
+    }
+    if (typeof insertBefore === "function") {
+      console.log(val.slice(0, 3));
+      console.log(val.startsWith(insertBefore(val, idx)));
+    }
+    return val.startsWith(typeof (insertBefore) === "string" ? insertBefore : insertBefore(val, idx))
+  });
 
   let insertionLength = 0;
 
