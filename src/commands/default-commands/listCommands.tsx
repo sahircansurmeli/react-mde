@@ -68,12 +68,16 @@ export const makeList = (
   api: TextApi,
   insertBefore: string | AlterLineFunction
 ) => {
-  // Adjust the selection to encompass the whole word if the caret is inside one
-  const newSelectionRange = selectWord({
-    text: state0.text,
-    selection: state0.selection
+  const currentLineIdx = state0.text.slice(0, state0.selection.start).lastIndexOf("\n") + 1;
+  let nextLineIdx = state0.text.slice(state0.selection.end+1).indexOf("\n");
+  nextLineIdx = nextLineIdx >= 0 ? nextLineIdx + currentLineIdx + 1: state0.text.length;
+
+  console.log(currentLineIdx, nextLineIdx);
+
+  const state1 = api.setSelectionRange({
+    start: currentLineIdx,
+    end: nextLineIdx
   });
-  const state1 = api.setSelectionRange(newSelectionRange);
 
   const breaksBeforeCount = getBreaksNeededForEmptyLineBefore(
     state1.text,
