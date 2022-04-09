@@ -18,20 +18,39 @@ export function insertBeforeEachLine(
 ): { modifiedText: string; insertionLength: number } {
   const lines = selectedText.split(/\n/);
 
+  const isAlreadyAList = lines.every((val, idx) => (
+    val.startsWith(typeof (insertBefore) === "string" ? insertBefore : insertBefore(val, idx))
+  ));
+
   let insertionLength = 0;
-  const modifiedText = lines
-    .map((item, index) => {
-      if (typeof insertBefore === "string") {
-        insertionLength += insertBefore.length;
-        return insertBefore + item;
-      } else if (typeof insertBefore === "function") {
-        const insertionResult = insertBefore(item, index);
-        insertionLength += insertionResult.length;
-        return insertBefore(item, index) + item;
-      }
-      throw Error("insertion is expected to be either a string or a function");
-    })
-    .join("\n");
+
+  const modifiedText = isAlreadyAList
+    ? lines
+      .map((item, index) => {
+        if (typeof insertBefore === "string") {
+          insertionLength -= insertBefore.length;
+          return item.slice(insertBefore.length);
+        } else if (typeof insertBefore === "function") {
+          const insertionResult = insertBefore(item, index);
+          insertionLength -= insertionResult.length;
+          return item.slice(insertionResult.length);
+        }
+        throw Error("insertion is expected to be either a string or a function");
+      })
+      .join("\n")
+    : lines
+      .map((item, index) => {
+        if (typeof insertBefore === "string") {
+          insertionLength += insertBefore.length;
+          return insertBefore + item;
+        } else if (typeof insertBefore === "function") {
+          const insertionResult = insertBefore(item, index);
+          insertionLength += insertionResult.length;
+          return insertBefore(item, index) + item;
+        }
+        throw Error("insertion is expected to be either a string or a function");
+      })
+      .join("\n");
 
   return { modifiedText, insertionLength };
 }
