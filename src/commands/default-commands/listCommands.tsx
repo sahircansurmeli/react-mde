@@ -108,21 +108,30 @@ export const makeList = (
 };
 
 export const unorderedListCommand: Command = {
-  buttonProps: { "aria-label": "Add unordered list" },
+  buttonProps: { 
+    "aria-label": "Add a bulleted list",
+    "title": "Add a bulleted list"
+  },
   execute: ({ initialState, textApi }) => {
     makeList(initialState, textApi, "- ");
   }
 };
 
 export const orderedListCommand: Command = {
-  buttonProps: { "aria-label": "Add ordered list" },
+  buttonProps: {
+    "aria-label": "Add a numbered list",
+    "title": "Add a numbered listt"
+  },
   execute: ({ initialState, textApi }) => {
     makeList(initialState, textApi, (item, index) => `${index + 1}. `);
   }
 };
 
 export const checkedListCommand: Command = {
-  buttonProps: { "aria-label": "Add checked list" },
+  buttonProps: {
+    "aria-label": "Add a task list",
+    "title": "Add a task list"
+  },
   execute: ({ initialState, textApi }) => {
     makeList(initialState, textApi, (item, index) => `- [ ] `);
   }

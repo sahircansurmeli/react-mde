@@ -3,7 +3,10 @@ import { Command } from "../../types";
 import { selectWord } from "../../util/MarkdownUtil";
 
 export const strikeThroughCommand: Command = {
-  buttonProps: { "aria-label": "Add strikethrough text" },
+  buttonProps: {
+    "aria-label": "Add strikethrough text",
+    "title": "Add strikethrough text" 
+  },
   execute: ({ initialState, textApi }) => {
     // Adjust the selection to encompass the whole word if the caret is inside one
     const newSelectionRange = selectWord({

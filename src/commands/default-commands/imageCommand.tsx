@@ -3,7 +3,10 @@ import { Command } from "../command";
 import { selectWord } from "../../util/MarkdownUtil";
 
 export const imageCommand: Command = {
-  buttonProps: { "aria-label": "Add image" },
+  buttonProps: {
+    "aria-label": "Add an image",
+    "title": "Add an image"
+  },
   execute: ({ initialState, textApi }) => {
     // Replaces the current selection with the whole word selected
     const state1 = textApi.setSelectionRange(
